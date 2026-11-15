@@ -1,0 +1,12 @@
+---
+title: "HW5_cmh2275"
+author: "cmh2275"
+date: "2026-11-15"
+output: git_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
