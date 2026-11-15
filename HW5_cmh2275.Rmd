@@ -2,11 +2,52 @@
 title: "HW5_cmh2275"
 author: "cmh2275"
 date: "2026-11-15"
-output: git_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+
+source("functions/birthday_repeated.R")
+
+knitr::opts_chunk$set(
+  fig.width = 6, 
+  fig.asp = 0.6, 
+  out.width = "90%"
+  )
+  
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+  
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
+
 ```
 
+## Problem 1
+
+```{r}
+brithday_results_df = 
+  expand_grid(
+    number_of_people = rep(2:50), 
+    iter = 1:1000
+  )|>
+  mutate(
+    repeated = map_lgl(number_of_people, birthday_repeated)
+  )
+
+
+brithday_results_df |>
+  group_by(number_of_people)|>
+  summarize(prob_of_repeat = mean(repeated))|>
+  ggplot(aes(x=number_of_people, y = prob_of_repeat))+
+  geom_point()+
+  geom_line()
+```
 
