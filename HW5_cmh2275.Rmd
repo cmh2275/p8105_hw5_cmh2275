@@ -51,7 +51,7 @@ brithday_results_df |>
   geom_line()
 ```
 
-The probability of 2 people having the same birth is around 0.27. 
+The probability of 2 people having the same birth is around 50 percent between 22 and 23 people. If there are 50 people in a room, the probability is close to, but not exactly, 100 percent.  
 
 ## Problem 2
 
@@ -110,4 +110,9 @@ study_df|>
   )
   
 ```
+
+Observation values in the experinmental group seemed to generally increase over weeks 1 to 8, while the control groups observations stated relatively stable, with some variability, over the weeks compared to the experimental group. 
+
+## Problem 3 
+
 
