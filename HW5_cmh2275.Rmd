@@ -51,3 +51,63 @@ brithday_results_df |>
   geom_line()
 ```
 
+The probability of 2 people having the same birth is around 0.27. 
+
+## Problem 2
+
+```{r}
+library(tidyverse)
+library(rvest)
+```
+
+Import & tidy 
+```{r}
+study_df = 
+  tibble(file_name = list.files("data", pattern = "\\.csv$"))|>
+  mutate(
+    data = map(file.path("data", file_name), read_csv)
+  )|>
+  unnest(data)|>
+  mutate(
+    file_name = str_remove(file_name, "\\.csv$")
+    )|>
+  separate (
+    file_name, into = c("arm", "subject_id"), sep = "_"
+    )|>
+  mutate (
+    arm = recode(arm, con = "control", exp = "experimental"), 
+    arm = factor (arm, levels = c("control", "experimental")),
+    subject_id = str_c(arm, "_", subject_id)
+  )|>
+  pivot_longer (
+    cols = starts_with("week_"), 
+    names_to = "week", 
+    names_prefix = "week_", 
+    values_to = "obs"
+  )|>
+  mutate (
+    week = as.numeric(week)
+  )|>
+  select(
+    subject_id, arm, week, obs
+  )
+
+study_df
+```
+
+Spagetti Plot
+
+```{r}
+study_df|>
+  ggplot(aes(x = week, y = obs, group = subject_id, color = arm))+
+  geom_line(alpha = 0.5)+
+  geom_point(alpha = 0.5)+
+  labs(
+    title = "Observations Over Time by Subject", 
+    x = "Week", 
+    y = "Observation", 
+    color = "Arm"
+  )
+  
+```
+
