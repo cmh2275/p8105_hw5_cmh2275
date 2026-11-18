@@ -111,8 +111,93 @@ study_df|>
   
 ```
 
-Observation values in the experinmental group seemed to generally increase over weeks 1 to 8, while the control groups observations stated relatively stable, with some variability, over the weeks compared to the experimental group. 
+Observation values in the experimental group seemed to generally increase over weeks 1 to 8, while the control groups observations stated relatively stable, with some variability, over the weeks compared to the experimental group. 
 
 ## Problem 3 
 
+```{r}
+library(tidyverse)
 
+set.seed(1)
+```
+
+Function
+```{r}
+ttest_sim = function(mu, n = 30, sigma = 5) {
+  x = rnorm(n, mean = mu, sd = sigma)
+  t.test(x, mu = 0)|>
+    broom::tidy()|>
+    select(mu_hat = estimate, p_val = p.value)
+}
+```
+
+Run Sim
+
+```{r}
+ttest_sim_results = 
+  expand_grid(
+    true_mu = 0:6, 
+    iter = 1:5000
+  )|>
+  mutate(results = map(true_mu, ttest_sim))|>
+           unnest(results) |>
+           mutate(reject = p_val < 0.05)
+         
+```
+
+
+```{r}
+ttest_sim_sum = 
+  ttest_sim_results |>
+  group_by (true_mu)|>
+  summarize (
+    power = mean(reject), 
+    avg_mu_hat = mean(mu_hat), 
+    avg_mu_hat_reject = mean(mu_hat[reject])
+  )
+```
+
+first plot 
+
+```{r}
+ttest_sim_sum |>
+  ggplot(aes(x = true_mu, y = power))+
+  geom_point()+
+  geom_line()+
+  labs(
+    title = "One-sample T-test Power with n = 30, σ = 5, α = 0.05", 
+    x = "True Value of μ", 
+    y = "Proportion of times the null rejected (Power)"
+  )
+```
+
+Power increases as μ increases, steeply after μ=1 until about μ=4 at which point it increases to just about 1.00 for μ<4.  
+
+second plot 
+
+```{r}
+ttest_sim_sum |>
+  pivot_longer(
+    c(avg_mu_hat, avg_mu_hat_reject), 
+    names_to = "sample", 
+    values_to = "avg_estimate"
+  )|>
+  mutate (
+    sample = recode(sample,
+                    avg_mu_hat = "all samples", 
+                    avg_mu_hat_reject = "null rejected samples only")
+  )|>
+  
+  ggplot(aes(x = true_mu, y = avg_estimate, color = sample))+
+  geom_point()+
+  geom_line()+
+  labs(
+    title = "Average Estimate of μ vs true μ", 
+    x = "True μ", 
+    y = "Average μ", 
+    color = NULL
+  )
+
+```
+
+The average of μ for samples where the null is rejected is not approximately equal to the true value of μ when μ is low, meaning when power is low, but the average of μ in rejected samples is close to the true μ for larger values of μ, starting around μ <3 or when power is high. When power is high, more samples are rejected so estimate bias is less.  
