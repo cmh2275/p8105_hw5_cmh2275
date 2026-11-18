@@ -8,6 +8,7 @@ output: github_document
 ```{r setup, include=FALSE}
 
 library(tidyverse)
+library(rvest)
 
 source("functions/birthday_repeated.R")
 
@@ -55,10 +56,6 @@ The probability of 2 people having the same birth is around 50 percent between 2
 
 ## Problem 2
 
-```{r}
-library(tidyverse)
-library(rvest)
-```
 
 Import & tidy 
 ```{r}
@@ -116,8 +113,6 @@ Observation values in the experimental group seemed to generally increase over w
 ## Problem 3 
 
 ```{r}
-library(tidyverse)
-
 set.seed(1)
 ```
 
@@ -173,7 +168,7 @@ ttest_sim_sum |>
 
 Power increases as μ increases, steeply after μ=1 until about μ=4 at which point it increases to just about 1.00 for μ<4.  
 
-second plot 
+second plot
 
 ```{r}
 ttest_sim_sum |>
